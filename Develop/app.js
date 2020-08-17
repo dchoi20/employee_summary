@@ -10,6 +10,8 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
 
+const teamMembers = [];
+
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
 function init() {
@@ -79,11 +81,10 @@ function teamRoster() {
               choices.email,
               choices.github
             );
-            console.log(engineer);
+            teamMembers.push(engineer);
             teamRoster();
           });
-      }
-      if (choice.role === "Intern") {
+      } else if (choice.role === "Intern") {
         return inquirer
           .prompt([
             {
@@ -114,9 +115,15 @@ function teamRoster() {
               choices.email,
               choices.school
             );
-            console.log(intern);
+            teamMembers.push(intern);
             teamRoster();
           });
+      } else {
+        fs.writeFile(outputPath, render(teamMembers), function (err) {
+          if (err) {
+            console.log(err);
+          }
+        });
       }
     });
 }
@@ -128,7 +135,7 @@ init().then((input) => {
     input.email,
     input.officeNumber
   );
-  console.log(manager);
+  teamMembers.push(manager);
   teamRoster();
 });
 
